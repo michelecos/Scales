@@ -7,6 +7,8 @@ Currently, it supports only a guitar fretboard in standard tuning.
 
 The library draws in an html5 `canvas` element.
 
+It is written in EcmaScript 6 and it has been tested in Safari 10.0.1 and Vivaldi 1.5.658.42, which uses Chromium and is compatible with Chrome 54.
+
 ## Use
 
 The library is very easy to use.
