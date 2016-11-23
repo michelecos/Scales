@@ -3,6 +3,8 @@
 Scales is a library for drawing scale diagrams on a guitar fretboard.
 Currently, it supports only a guitar fretboard in standard tuning.
 
+![The output of the library, representing a guitar fretboard with markers](img/scales.png)
+
 The library draws in an html5 `canvas` element.
 
 ## Use
@@ -18,6 +20,8 @@ Drawing a a fretboard requires creation of a Fretboard object, the canvas object
 
     const fretboard = new Fretboard(document.getElementById('theCanvas'));
 
+![an empty fretboard](img/scale0.png)
+
 you may specify a number of frets
 
     const fretboard = new Fretboard(document.getElementById('theCanvas'), 24);
@@ -29,15 +33,22 @@ The `drawScale` method requires a scale definition and a starting fret
 	// dorian scale at twelvth fret
     fretboard.drawScale(scale.dorian, 12);
 
+![dorian scale at twelvth fret](img/scale3.png)
+
 An optional parameter, allows to specify the starting string
 
 	// major scale at eighth fret, starting on fourth string
     fretboard.drawScale(scale.major, 7, 4);
 
+![dorian scale at twelvth fret](img/scale2.png)
+
 A second optional parameter allows to specify the number of steps in the scale to be drawn, as a musical interval, so 8 is an octave and 15 is two octaves.
 
     // major scale at thid fret, spanning two octaves 
     fretboard.drawScale(scale.major, 2, 6, 15);
+
+
+![major scale at thid fret, spanning two octaves](img/scale1.png)
 
 ## Scale definitions
 
@@ -73,3 +84,10 @@ The default theme provided is this:
 	    scale: '#87adde'
 	};
 
+## How it works
+
+The library starts drawing a scale according to its definition, from the specified string and the specified fret.
+
+It goes on from there adding notes and keeping the fingering within four frets. When a note would be too distant from the initial position, we skip a string.
+
+The algorithm could be enhanced allowing different positions, like starting on something other than the index or middle finger, as it currently does.
