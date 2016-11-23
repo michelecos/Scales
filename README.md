@@ -15,7 +15,7 @@ The library is very easy to use.
 You should provide an html5 canvas, where the library will draw a guitar neck and scales
 
     <canvas id="theCanvas" width="1000" height="90" style="border:0px solid #000000;">
-       Does yout browser support the canvas tag?
+       Does your browser support the canvas tag?
     </canvas>
 
 Drawing a a fretboard requires creation of a Fretboard object, the canvas object is a required construction parameter
