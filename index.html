@@ -6,12 +6,14 @@
     <body>
         <h1>A few scales</h1>
         <p>
-        <canvas id="theCanvas" width="1000" height="90" style="border:0px solid #000000;" />
+            <canvas id="theCanvas" width="1000" height="90" style="border:0px solid #000000;">
+                Does yout browser support the canvas tag?
+            </canvas>
         </p>
-        <script language="javascript" src="js/scales.js"> </script>
-        <script language="javascript">
+        <script src="js/scales.js"> </script>
+        <script >
 
-            const fretboard = new Fretboard(24, document.getElementById('theCanvas'));
+            const fretboard = new Fretboard(document.getElementById('theCanvas'));
 
 
             // major scale at thid fret, spanning two octaves

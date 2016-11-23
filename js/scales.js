@@ -1,6 +1,6 @@
 // This class represents the fretboard
 class Fretboard {
-    constructor(numberOfFrets, canvas) {
+    constructor(canvas, numberOfFrets=22) {
         this.numberOfFrets = numberOfFrets;
         this.width = canvas.width;
         this.canvas = canvas;
