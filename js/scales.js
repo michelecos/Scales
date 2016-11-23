@@ -1,92 +1,126 @@
-            function disegnaTasto(entry) {
-                entry.disegna();
+// This class represents the fretboard
+class Fretboard {
+    constructor(numberOfFrets, canvas) {
+        this.numberOfFrets = numberOfFrets;
+        this.width = canvas.width;
+        this.canvas = canvas;
+
+        // this is an approxumation of the tempered scale
+        // geometric progression ratio 2^(1/12)
+        this.ratio = 0.94;
+        this.frets = new Array();
+        this.drawFretboard();
+    }
+
+    drawFret(entry) {
+        entry.draw();
+    }
+
+    drawScale(scale, fromFret, fromString = 6, span = 8) {
+        var pos = fromFret;
+        var string = fromString - 1;
+        var step = 0;
+
+        do {
+            if (step == 0) {
+                this.frets[pos].mark(string, theme.fundamental);
+            } else {
+                this.frets[pos].mark(string);
             }
-
-            function tastiera(numeroTasti, canvas) {
-                this.numeroTasti = numeroTasti;
-                this.scala = canvas.width;
-                this.canvas = canvas;
-                
-                // un'approssimazione della costante
-                // della progressione temperata
-                this.ratio = 0.94;
-                this.tasti = new Array();
-                
-                this.marcaScala = function(scala, inizio) {
-                    var pos = inizio;
-                    var corda = 5;
-                    var grado = 0;
-
-                    do {
-                        if (grado == 0) {
-                            this.tasti[pos].marca(corda, '#ff3030');
-                        } else {
-                            this.tasti[pos].marca(corda);
-                        }
-                        pos += scala[grado];
-                        grado++;
-                        if (grado >= scala.length) {
-                            grado = 0;
-                        }
-                        if (pos > inizio + 3) {
-                            pos -= (corda == 2 ? 4 : 5);
-                            corda--;
-                        }
-                    } while(corda >= 0);
-                }
-
-                // inizializza i tasti
-                var da = this.scala;
-                for (i = 0; i < numeroTasti; i++) {
-                    var larghezza = da * (1 - this.ratio);
-                    this.tasti[i] = new tasto(this.scala - da, larghezza, this.canvas);
-                    if ([3, 5, 7, 9, 12, 15, 17, 19, 21].indexOf(i + 1) >= 0) {
-                        this.tasti[i].pallino = true;
-                    } else {
-                        this.tasti[i].pallino = false;
-                    }
-                    da -= larghezza;
-                }
-
-                this.tasti.forEach(disegnaTasto);
+            pos += scale[step];
+            step++;
+            if (step >= scale.length) {
+                step = 0;
             }
-            
-            function tasto(inizio, larghezza, canvas, pallino) {
-                this.inizio= inizio;
-                this.larghezza = larghezza;
-                this.canvas = canvas;
-                this.pallino = pallino;
-                
-                var ctx = canvas.getContext('2d');
-                
-                this.disegna = function() {
-                    ctx.fillStyle = '#404040'; //"#807050";
-                    ctx.fillRect(inizio, 0, larghezza, canvas.height);
-                    // il pallino
-                    if (this.pallino == true) {
-                        ctx.fillStyle = "#808080";
-                        ctx.arc(inizio + larghezza / 2, canvas.height / 2, 4, 0, 2 * Math.PI);
-                        ctx.fill();
-                    }
-                    // il capotasto
-                    ctx.fillStyle = "#ffffd0";
-                    ctx.fillRect(inizio + larghezza - 3, 0, 3, canvas.height);
-                    // le corde
-                    ctx.fillStyle = "#d0d0d0";
-                    for (corda = 0; corda < 6; corda++) {
-                        ctx.fillRect(inizio, this.trovaCorda(corda), larghezza, 2);
-                    }
-                }
-                
-                this.marca = function(corda, colore) {
-                    ctx.beginPath();
-                    colore = (typeof colore === "undefined") ? "#a0a0ff" : colore;
-                    ctx.fillStyle = colore;
-                    ctx.arc(inizio + larghezza / 2, this.trovaCorda(corda) , 7, 0, 2 * Math.PI);
-                    ctx.fill();
-                }
-                
-                this.trovaCorda = function(numero) {
-                    return 5 + 15 * numero;
-                }
+            if (pos > fromFret + 3) {
+                pos -= (string == 2 ? 4 : 5);
+                string--;
             }
+        } while(string >= 0 && --span > 0);
+    }
+
+    drawFretboard() {
+        // inizializza i Frets
+        var from = this.width;
+        for (let i = 0; i < this.numberOfFrets; i++) {
+            var width = from * (1 - this.ratio);
+            this.frets[i] = new Fret(this.width - from, width, this.canvas);
+            if ([3, 5, 7, 9, 12, 15, 17, 19, 21].indexOf(i + 1) >= 0) {
+                this.frets[i].dot = true;
+            } else {
+                this.frets[i].pallino = false;
+            }
+            from -= width;
+        }
+
+        this.frets.forEach(this.drawFret);        
+    }
+}
+
+class Fret {
+    constructor(start, width, canvas, dot) {
+        this.start= start;
+        this.width = width;
+        this.canvas = canvas;
+        this.dot = dot;
+        this.ctx = canvas.getContext('2d');        
+    }
+    
+    draw() {
+        // the neck
+        this.ctx.fillStyle = theme.neck; //"#807050";
+        this.ctx.fillRect(this.start, 0, this.width, this.canvas.height);
+        // the dot
+        if (this.dot == true) {
+            this.ctx.fillStyle = theme.dot;
+            this.ctx.arc(this.start + this.width / 2, this.canvas.height / 2, 4, 0, 2 * Math.PI);
+            this.ctx.fill();
+        }
+        // the nut
+        this.ctx.fillStyle = theme.fret;
+        this.ctx.fillRect(this.start + this.width - 3, 0, 3, this.canvas.height);
+        // the strings
+        this.ctx.fillStyle = theme.string;
+        for (let string = 0; string < 6; string++) {
+            this.ctx.fillRect(this.start, this.findString(string), this.width, 2);
+        }
+    }
+    
+    mark(string, color) {
+        this.ctx.beginPath();
+        color = (typeof color === 'undefined') ? theme.scale : color;
+        this.ctx.fillStyle = color;
+        this.ctx.arc(this.start + this.width / 2, this.findString(string) , 7, 0, 2 * Math.PI);
+        this.ctx.fill();
+    }
+    
+    findString(number) {
+        return 5 + 15 * number;
+    }
+}
+
+// theme based on burlywood http://www.colorhexa.com/deb887
+const theme = {
+    neck: '#221709',
+    dot: '#808080',
+    fret: '#e2c196',
+    string: '#fcf8f3',
+    fundamental: '#87deb8',
+    scale: '#87adde'
+};
+
+const scale = {
+    major: [2, 2, 1, 2, 2, 2, 1],
+    jonian: [2, 2, 1, 2, 2, 2, 1],
+    dorian: [2, 1, 2, 2, 2, 1, 2],
+    phrygian: [1, 2, 2, 2, 1, 2, 2],
+    lydian: [2, 2, 2, 1, 2, 2, 1],
+    mixolydian: [2, 2, 1, 2, 2, 1, 2],
+    eolian: [2, 1, 2, 2, 1, 2, 2],
+    locrian: [1, 2, 2, 1, 2, 2, 2],
+    hexatonic: [2, 2, 2, 2, 2, 2],
+    minor: [2, 1, 2, 2, 1, 2, 2],
+    jazz_minor: [2, 1, 2, 2, 2, 2, 1],
+};
+
+

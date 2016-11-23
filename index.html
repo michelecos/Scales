@@ -1,25 +1,31 @@
+<!DOCTYPE html>
 <html>
+    <head>
+        <title>A few scales on the fretboard</title>
+    </head>
     <body>
-        <h1>Alcune scale</h1>
+        <h1>A few scales</h1>
         <p>
-        <canvas id="lacanvas" width="1000" height="90" style="border:0px solid #000000;" />
+        <canvas id="theCanvas" width="1000" height="90" style="border:0px solid #000000;" />
         </p>
         <script language="javascript" src="js/scales.js"> </script>
         <script language="javascript">
-            
-            var lacanvas = document.getElementById('lacanvas');
-            var tast = new tastiera(24, lacanvas);
-            
-            //tast.tasti[21].marca(1);
 
-            // una scala maggiore al terzo tasto
-            tast.marcaScala([2, 2, 1, 2, 2, 2, 1], 2);
-            
-            // una scala dorica al decimo tasto
-            tast.marcaScala([2, 1, 2, 2, 2, 1, 2], 9);
-            
-            // una scala esatonale al diciottesimo tasto
-            tast.marcaScala([2, 2, 2, 2, 2, 2], 18);
+            const fretboard = new Fretboard(24, document.getElementById('theCanvas'));
+
+
+            // major scale at thid fret, spanning two octaves
+            fretboard.drawScale(scale.major, 2, 6, 15);
+
+            // major scale at eighth fret, starting on fourth string
+            fretboard.drawScale(scale.major, 7, 4);
+
+            // dorian scale at twelvth fret
+            fretboard.drawScale(scale.dorian, 12);
+
+            // hexatonic scale at eighteenth fret starting on A string
+            fretboard.drawScale(scale.hexatonic, 18, 5, 7);
+
         </script>
     </body>
 </html>
